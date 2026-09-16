@@ -30,3 +30,19 @@ export interface ProductFilters {
   limit?: number;
   offset?: number;
 }
+
+export type ProductSort =
+  | "default"
+  | "price-asc"
+  | "price-desc"
+  | "name-asc"
+  | "name-desc";
+
+export interface ProductQuery {
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: ProductSort;
+  page?: number;
+}

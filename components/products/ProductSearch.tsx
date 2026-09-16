@@ -1,25 +1,25 @@
 "use client";
 
+import { FormEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 
 export default function ProductSearch() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [value, setValue] = useState(
-    searchParams.get("title") ?? ""
+  const [search, setSearch] = useState(
+    searchParams.get("search") ?? ""
   );
 
-  function handleSearch() {
-    const params = new URLSearchParams(
-      searchParams.toString()
-    );
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-    if (value.trim()) {
-      params.set("title", value.trim());
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (search.trim()) {
+      params.set("search", search.trim());
     } else {
-      params.delete("title");
+      params.delete("search");
     }
 
     params.delete("page");
@@ -28,28 +28,21 @@ export default function ProductSearch() {
   }
 
   return (
-    <div className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-3">
       <input
         type="search"
-        value={value}
-        onChange={(event) =>
-          setValue(event.target.value)
-        }
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            handleSearch();
-          }
-        }}
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
         placeholder="Search products..."
-        className="w-full rounded-lg border px-4 py-2"
+        className="h-11 flex-1 rounded-xl border px-4 outline-none transition focus:ring-2"
       />
 
       <button
-        onClick={handleSearch}
-        className="rounded-lg bg-black px-5 py-2 text-white"
+        type="submit"
+        className="rounded-xl bg-black px-6 font-medium text-white transition hover:opacity-80"
       >
         Search
       </button>
-    </div>
+    </form>
   );
 }

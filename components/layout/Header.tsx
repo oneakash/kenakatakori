@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import LogoutButton from "@/components/auth/LogoutButton";
 import MobileMenu from "./MobileMenu";
+import CartLink from "@/components/cart/CartLink";
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -23,9 +24,7 @@ export default async function Header() {
             Products
           </Link>
 
-          <Link href="/cart">
-            Cart
-          </Link>
+          <CartLink />
 
           {user ? (
             <>
