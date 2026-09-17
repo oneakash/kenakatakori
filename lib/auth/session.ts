@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const API_URL = "https://api.escuelajs.co/api/v1";
+const API_URL = process.env.API_URL;
 
 export async function getCurrentUser() {
   const cookieStore = await cookies();

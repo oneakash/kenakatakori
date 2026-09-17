@@ -1,9 +1,13 @@
 import {
-  RegisterUserInput,
+  RegisterInput,
   User,
 } from "@/types/user";
 
-const API_URL = "https://api.escuelajs.co/api/v1";
+const API_URL = process.env.API_URL;
+
+if (!API_URL) {
+  throw new Error("API_URL is not defined");
+}
 
 export async function getUsers(): Promise<User[]> {
   const response = await fetch(`${API_URL}/users`);
@@ -30,7 +34,7 @@ export async function getUserById(
 }
 
 export async function registerUser(
-  data: RegisterUserInput
+  data: RegisterInput
 ): Promise<User> {
   const response = await fetch(`${API_URL}/users/`, {
     method: "POST",

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const API_URL = "https://api.escuelajs.co/api/v1";
+const API_URL = process.env.API_URL;
+
+if (!API_URL) {
+  throw new Error("API_URL is not defined");
+}
 
 export async function POST(request: Request) {
   try {

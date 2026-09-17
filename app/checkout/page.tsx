@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
+
 import { getCurrentUser } from "@/lib/auth/session";
+import CheckoutForm from "@/components/checkout/CheckoutForm";
+import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 export default async function CheckoutPage() {
   const user = await getCurrentUser();
@@ -9,22 +12,22 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <div className="mx-auto max-w-4xl px-4 py-10">
-        <h1 className="text-3xl font-bold">
-          Checkout
-        </h1>
-
-        <div className="mt-8 rounded-2xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <h2 className="text-xl font-bold">
-            Welcome, {user.name}
-          </h2>
+    <main className="min-h-screen bg-gray-50 py-10 dark:bg-gray-950">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold">
+            Checkout
+          </h1>
 
           <p className="mt-2 text-gray-500">
-            You can continue with your order.
+            Complete your order information.
           </p>
+        </div>
 
-          {/* Checkout form will go here */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+          <CheckoutForm />
+
+          <CheckoutSummary />
         </div>
       </div>
     </main>

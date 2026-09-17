@@ -1,6 +1,10 @@
 import { Product } from "@/types/product";
 
-const API_URL = "https://api.escuelajs.co/api/v1";
+const API_URL = process.env.API_URL;
+
+if (!API_URL) {
+  throw new Error("API_URL is not defined");
+}
 
 export interface ProductFilters {
   title?: string;
@@ -61,6 +65,30 @@ export async function getProducts(
   }
 
   return response.json();
+}
+
+export async function getAllProducts(
+  filters: Omit<ProductFilters, "limit" | "offset"> = {}
+): Promise<Product[]> {
+  const pageSize = 100;
+  const products: Product[] = [];
+  let offset = 0;
+
+  while (true) {
+    const page = await getProducts({
+      ...filters,
+      limit: pageSize,
+      offset,
+    });
+
+    products.push(...page);
+
+    if (page.length < pageSize) {
+      return products;
+    }
+
+    offset += page.length;
+  }
 }
 
 export async function getProductById(

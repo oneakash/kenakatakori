@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -10,96 +10,59 @@ export default function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError("");
 
+    // Client-side validation
     if (!name.trim()) {
-      setError("Please enter your name.");
+      setError("Name is required");
       return;
     }
 
     if (!email.trim()) {
-      setError("Please enter your email.");
+      setError("Email is required");
       return;
     }
 
     if (password.length < 4) {
-      setError(
-        "Password must be at least 4 characters."
-      );
+      setError("Password must be at least 4 characters");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Passwords do not match");
       return;
     }
 
-    setLoading(true);
-
     try {
-      const response = await fetch(
-        "/api/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: name.trim(),
-            email: email.trim(),
-            password,
-          }),
-        }
-      );
+      setLoading(true);
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Registration failed"
-        );
+        throw new Error(data.message || "Registration failed");
       }
 
-      /*
-       * Registration succeeded.
-       *
-       * Login afterwards so the user is immediately
-       * authenticated.
-       */
-      const loginResponse = await fetch(
-        "/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.trim(),
-            password,
-          }),
-        }
-      );
-
-      const loginData = await loginResponse.json();
-
-      if (!loginResponse.ok) {
-        throw new Error(
-          loginData.message ||
-            "Account created, but automatic login failed."
-        );
-      }
-
+      // Registration + automatic login succeeded
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -114,32 +77,28 @@ export default function RegisterForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-5"
-    >
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Name */}
       <div>
         <label
           htmlFor="name"
           className="mb-2 block text-sm font-medium"
         >
-          Name
+          Full name
         </label>
 
         <input
           id="name"
           type="text"
-          autoComplete="name"
           value={name}
-          onChange={(event) =>
-            setName(event.target.value)
-          }
+          onChange={(event) => setName(event.target.value)}
+          placeholder="John Doe"
           disabled={loading}
-          placeholder="Your name"
-          className="w-full rounded-lg border px-4 py-3 outline-none focus:ring-2 disabled:opacity-50"
+          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-white"
         />
       </div>
 
+      {/* Email */}
       <div>
         <label
           htmlFor="email"
@@ -151,17 +110,15 @@ export default function RegisterForm() {
         <input
           id="email"
           type="email"
-          autoComplete="email"
           value={email}
-          onChange={(event) =>
-            setEmail(event.target.value)
-          }
-          disabled={loading}
+          onChange={(event) => setEmail(event.target.value)}
           placeholder="you@example.com"
-          className="w-full rounded-lg border px-4 py-3 outline-none focus:ring-2 disabled:opacity-50"
+          disabled={loading}
+          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-white"
         />
       </div>
 
+      {/* Password */}
       <div>
         <label
           htmlFor="password"
@@ -173,63 +130,58 @@ export default function RegisterForm() {
         <input
           id="password"
           type="password"
-          autoComplete="new-password"
           value={password}
-          onChange={(event) =>
-            setPassword(event.target.value)
-          }
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="••••••••"
           disabled={loading}
-          placeholder="Create a password"
-          className="w-full rounded-lg border px-4 py-3 outline-none focus:ring-2 disabled:opacity-50"
+          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-white"
         />
       </div>
 
+      {/* Confirm Password */}
       <div>
         <label
-          htmlFor="confirm-password"
+          htmlFor="confirmPassword"
           className="mb-2 block text-sm font-medium"
         >
-          Confirm Password
+          Confirm password
         </label>
 
         <input
-          id="confirm-password"
+          id="confirmPassword"
           type="password"
-          autoComplete="new-password"
           value={confirmPassword}
           onChange={(event) =>
             setConfirmPassword(event.target.value)
           }
+          placeholder="••••••••"
           disabled={loading}
-          placeholder="Confirm your password"
-          className="w-full rounded-lg border px-4 py-3 outline-none focus:ring-2 disabled:opacity-50"
+          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-white"
         />
       </div>
 
+      {/* Error */}
       {error && (
-        <p
-          role="alert"
-          className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"
-        >
+        <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400">
           {error}
-        </p>
+        </div>
       )}
 
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-black px-4 py-3 font-semibold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-xl bg-black px-6 py-3 font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-gray-200"
       >
-        {loading
-          ? "Creating account..."
-          : "Create Account"}
+        {loading ? "Creating account..." : "Create account"}
       </button>
 
+      {/* Login */}
       <p className="text-center text-sm text-gray-500">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-medium text-black underline"
+          className="font-semibold text-gray-900 hover:underline dark:text-white"
         >
           Login
         </Link>

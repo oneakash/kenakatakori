@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import LogoutButton from "@/components/auth/LogoutButton";
 import MobileMenu from "./MobileMenu";
 import CartLink from "@/components/cart/CartLink";
+import ThemeToggle from "./ThemeToggle";
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -47,7 +48,10 @@ export default async function Header() {
           )}
         </nav>
 
-        <MobileMenu isLoggedIn={!!user} />
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <MobileMenu isLoggedIn={!!user} />
+        </div>
       </div>
     </header>
   );

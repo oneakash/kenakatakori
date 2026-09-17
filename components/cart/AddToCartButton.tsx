@@ -12,7 +12,6 @@ export default function AddToCartButton({
   product,
 }: AddToCartButtonProps) {
   const { addToCart } = useCart();
-
   const [added, setAdded] = useState(false);
 
   function handleAddToCart() {
@@ -29,7 +28,7 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={handleAddToCart}
-      className="w-full rounded-xl bg-black px-6 py-3.5 font-semibold text-white transition hover:scale-[1.01] hover:opacity-90 active:scale-[0.99] dark:bg-white dark:text-black"
+      className="mt-4 w-full rounded-xl bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
     >
       {added ? "✓ Added to Cart" : "Add to Cart"}
     </button>

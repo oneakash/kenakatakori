@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import {
-  checkEmailAvailability,
-  registerUser,
-} from "@/lib/api/auth";
+
+const API_URL = process.env.API_URL;
+
+if (!API_URL) {
+  throw new Error("API_URL is not defined");
+}
 
 export async function POST(request: Request) {
   try {
@@ -12,11 +14,11 @@ export async function POST(request: Request) {
     const email = body.email?.trim().toLowerCase();
     const password = body.password;
 
+    // Validate input
     if (!name || !email || !password) {
       return NextResponse.json(
         {
-          message:
-            "Name, email and password are required",
+          message: "Name, email and password are required",
         },
         { status: 400 }
       );
@@ -25,57 +27,114 @@ export async function POST(request: Request) {
     if (password.length < 4) {
       return NextResponse.json(
         {
-          message:
-            "Password must be at least 4 characters",
+          message: "Password must be at least 4 characters",
         },
         { status: 400 }
       );
     }
 
-    /*
-     * Check whether the email is already registered.
-     */
-    const isAvailable =
-      await checkEmailAvailability(email);
+    // Create user directly
+    const createUserResponse = await fetch(`${API_URL}/users/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        avatar: "https://api.lorem.space/image/face?w=640&h=480",
+      }),
+    });
 
-    if (!isAvailable) {
+    const userData = await createUserResponse.json();
+
+    // User creation failed
+    if (!createUserResponse.ok) {
+      console.error("Create user failed:", userData);
+
       return NextResponse.json(
         {
-          message: "Email is already registered",
+          message:
+            userData?.message || "Failed to create account",
         },
-        { status: 409 }
+        {
+          status: createUserResponse.status,
+        }
       );
     }
 
-    /*
-     * Create the user.
-     */
-    const user = await registerUser({
-      name,
-      email,
-      password,
-      avatar: body.avatar,
+    // Login automatically after successful registration
+    const loginResponse = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
     });
 
-    return NextResponse.json(
+    const loginData = await loginResponse.json();
+
+    if (!loginResponse.ok) {
+      console.error("Automatic login failed:", loginData);
+
+      return NextResponse.json(
+        {
+          message: "Account created successfully. Please login.",
+        },
+        { status: 201 }
+      );
+    }
+
+    // Create response
+    const response = NextResponse.json(
       {
         message: "Registration successful",
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          avatar: user.avatar,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          avatar: userData.avatar,
         },
       },
       { status: 201 }
     );
+
+    // Store access token
+    response.cookies.set(
+      "access_token",
+      loginData.access_token,
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      }
+    );
+
+    // Store refresh token
+    response.cookies.set(
+      "refresh_token",
+      loginData.refresh_token,
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      }
+    );
+
+    return response;
   } catch (error) {
     console.error("Registration error:", error);
 
     return NextResponse.json(
       {
-        message: "Unable to create account",
+        message: "Something went wrong while creating your account",
       },
       { status: 500 }
     );

@@ -1,7 +1,10 @@
 import { Category } from "@/types/category";
 import { Product } from "@/types/product";
+const API_URL = process.env.API_URL;
 
-const API_URL = "https://api.escuelajs.co/api/v1";
+if (!API_URL) {
+  throw new Error("API_URL is not defined");
+}
 
 export async function getCategories(): Promise<Category[]> {
   const response = await fetch(`${API_URL}/categories`);

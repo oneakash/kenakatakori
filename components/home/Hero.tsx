@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -13,7 +14,7 @@ export default function Hero() {
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Discover products
-            <span className="block">you'll love.</span>
+            <span className="block">you&apos;ll love.</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
@@ -42,9 +43,11 @@ export default function Hero() {
         <div className="relative hidden md:block">
           <div className="aspect-square overflow-hidden rounded-3xl bg-gray-200 dark:bg-gray-800">
             <div className="flex h-full items-center justify-center">
-              <img
+              <Image
                 src="/images/hero-image.jpeg"
                 alt="Hero Image"
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
                 className="h-full w-full object-cover"
               />
             </div>

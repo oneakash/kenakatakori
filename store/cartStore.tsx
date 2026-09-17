@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  startTransition,
   useContext,
   useEffect,
   useState,
@@ -39,7 +40,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const storedCart = localStorage.getItem(CART_STORAGE_KEY);
 
       if (storedCart) {
-        setItems(JSON.parse(storedCart));
+        const parsedCart = JSON.parse(storedCart);
+
+        startTransition(() => {
+          setItems(parsedCart);
+        });
       }
     } catch (error) {
       console.error("Failed to load cart:", error);
