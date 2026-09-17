@@ -26,6 +26,8 @@ KENAKATA is a production-style storefront built with Next.js App Router, TypeScr
 
 ## Getting Started
 
+LIVE: [https://kenakatakori.vercel.app](https://kenakatakori.vercel.app)
+
 Requirements: Node.js 20 or newer and npm.
 ```bash
 npm install
